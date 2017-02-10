@@ -18,14 +18,14 @@ public class PaceApduClient extends AIDLClient {
     private ConnectReturnImpl mLntConnectCallback = null;
     private DeviceListImpl mLntScanCallback = null;
 
-    private boolean toDestroyFlag = false;
+    private int mBusinessStat = STA_COUNT;
     private IPaceInvokeCallback.Stub mInvokeCallback = new IPaceInvokeCallback.Stub() {
         @Override
         public void onConnectResult(boolean isSuc, String mac) throws RemoteException {
             if (mLntConnectCallback != null) {
                 mLntConnectCallback.connectResult(isSuc, mac);
             }
-            toDestroyFlag = !isSuc;
+            mBusinessStat = isSuc ? STA_COUNT : STA_DESTROY;
         }
 
         @Override
@@ -102,6 +102,7 @@ public class PaceApduClient extends AIDLClient {
 
             }
         });
+        mBusinessStat = STA_RESET;
     }
 
     public void disconnect() {
@@ -112,7 +113,7 @@ public class PaceApduClient extends AIDLClient {
                 e.printStackTrace();
             }
         }
-        toDestroyFlag = true;
+        mBusinessStat = STA_DESTROY;
     }
 
     public Object getConnectState() {
@@ -185,18 +186,18 @@ public class PaceApduClient extends AIDLClient {
 
     @Override
     protected void onServiceDisconnect() {
-        if (mService != null) {
-            try {
-                mService.destory(mInvokeCallback);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
+        // if (mService != null) {
+        // try {
+        // mService.destory(mInvokeCallback);
+        // } catch (RemoteException e) {
+        // e.printStackTrace();
+        // }
+        // }
     }
 
     @Override
-    public boolean needDestroy() {
-        return toDestroyFlag;
+    public int getStatus() {
+        return mBusinessStat;
     }
 
 }
