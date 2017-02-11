@@ -9,24 +9,27 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.pacewear.lock.IJavaLock;
+import com.pacewear.lock.JavaLockHelper;
 import com.pacewear.tws.phoneside.wallet.IPaceApduService;
 
 import java.util.concurrent.Semaphore;
 
-public abstract class AIDLClient implements IServiceController {
+public abstract class AIDLClient implements IServiceLocker {
     public static final String TAG = "Lnt";
     public static final String PACEAPDU_ACTION = "com.pacewear.tws.phoneside.wallet.IPaceApduService";
     protected Context mContext;
-    protected IPaceApduService mService;
-    private Semaphore mSemaphore = null;
+    protected volatile IPaceApduService mService;
+    private ServiceLockHandler mController = null;
+    private IJavaLock mJavaLock = null;
 
     public AIDLClient(Context context) {
         mContext = context;
-        mSemaphore = new Semaphore(0);
+        mJavaLock = JavaLockHelper.newLock();
         if (!bindRemoteService(context)) {
             bindCustomRemoteService(context);
         }
-        new LowPowerController(this).reset();
+        mController = new ServiceLockHandler(this);
     }
 
     private IBinder.DeathRecipient mDeathRecipient = new IBinder.DeathRecipient() {
@@ -47,7 +50,7 @@ public abstract class AIDLClient implements IServiceController {
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "onServiceDisconnected Thread:" + Thread.currentThread().getName());
             mService = null;
-            mSemaphore.release();
+            mJavaLock.unlock();
             onServiceDisconnect();
         }
 
@@ -61,23 +64,25 @@ public abstract class AIDLClient implements IServiceController {
                 e.printStackTrace();
             }
             mService = IPaceApduService.Stub.asInterface(service);
-            mSemaphore.release();
+            mJavaLock.unlock();
             onServiceConnect();
         }
     };
 
     public boolean isServiceReady(Context context) {
+        Log.d(TAG, "isServiceReady begin");
         if (mService != null) {
+            Log.d(TAG, "isServiceReady: mService not null,direct use");
             return true;
         }
+        Log.d(TAG, "isServiceReady: need bindservice sync");
         if (!bindRemoteService(context) && !bindCustomRemoteService(context)) {
+            Log.e(TAG, "isServiceReady: binde service error");
             return false;
         }
-        try {
-            mSemaphore.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Log.d(TAG, "isServiceReady: wait service ok");
+        mJavaLock.lock(0);
+
         return mService != null;
     }
 
@@ -96,18 +101,32 @@ public abstract class AIDLClient implements IServiceController {
     private void unbindRemoteService() {
         if (mContext != null) {
             mContext.unbindService(mConnection);
+            mService = null;
         }
-    }
-
-    @Override
-    public void destory() {
-        unbindRemoteService();
-        onServiceDetroy();
     }
 
     protected void onServiceDetroy() {
         Log.e(TAG, "service is Destory");
         // 预留接口
+    }
+
+    protected void aquireLock() {
+        mController.onLockRequire();
+    }
+
+    protected void releaseLock() {
+        mController.onLockRelease();
+    }
+
+    @Override
+    public void onHandleLockMessage(boolean lock) {
+        if (!lock) {
+            // 不持锁的情况下解绑服务
+            unbindRemoteService();
+            onServiceDetroy();
+        } else {
+            // todo
+        }
     }
 
     protected abstract void onServiceConnect();
