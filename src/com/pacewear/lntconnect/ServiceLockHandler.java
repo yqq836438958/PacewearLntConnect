@@ -2,7 +2,7 @@
 package com.pacewear.lntconnect;
 
 public class ServiceLockHandler {
-    private long DURATION_SHUTDOWN = 10 * 1000; // TODO
+    private long DURATION_SHUTDOWN = 5 * 60 * 1000; // TODO
 
     private Runnable mShutdownBusinessRun = null;
     public static final String TAG = "Lnt";
