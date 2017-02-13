@@ -3,6 +3,7 @@ package com.pacewear.lntconnect;
 
 import android.content.Context;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.lnt.connectfactorylibrary.BlueToothDevice;
 import com.lnt.connectfactorylibrary.ConnectReturnImpl;
@@ -36,16 +37,18 @@ public class PaceApduClient extends AIDLClient {
             if (mLntScanCallback != null) {
                 ArrayList<BlueToothDevice> list = new ArrayList<BlueToothDevice>();
                 for (DeviceInfo info : infos) {
+                    if (info == null) {
+                        continue;
+                    }
                     BlueToothDevice device = new BlueToothDevice();
                     device.setAddress(info.getMacAddr());
                     device.setName(info.getName());
+                    Log.d(TAG, "device:addr:" + info.getMacAddr() + ",sName:" + device.getName());
                     list.add(device);
                 }
                 mLntScanCallback.devicesResult(list);
             }
-            if (infos == null || infos.length <= 0) {
-                releaseLock();
-            }
+            releaseLock();
         }
     };
 

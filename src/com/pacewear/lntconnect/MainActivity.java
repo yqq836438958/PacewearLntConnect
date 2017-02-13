@@ -13,8 +13,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.lnt.connectfactorylibrary.BlueToothDevice;
 import com.lnt.connectfactorylibrary.ConnectFactoryImpl;
 import com.lnt.connectfactorylibrary.ConnectReturnImpl;
+import com.lnt.connectfactorylibrary.DeviceListImpl;
+
+import java.util.ArrayList;
 
 public class MainActivity extends Activity implements OnClickListener {
     public static final String TAG = "Lnt";
@@ -23,6 +27,8 @@ public class MainActivity extends Activity implements OnClickListener {
     private Button mLntConnectBtn = null;
     private Button mLntDisconnectBtn = null;
     private Button mLntTransmitBtn = null;
+    private Button mLntScanBtn = null;
+    private Button mGetInfBtn = null;
     private ConnectFactoryImpl impl = null;
 
     @Override
@@ -32,9 +38,13 @@ public class MainActivity extends Activity implements OnClickListener {
         mLntConnectBtn = (Button) findViewById(R.id.connect);
         mLntDisconnectBtn = (Button) findViewById(R.id.disconnect);
         mLntTransmitBtn = (Button) findViewById(R.id.transmit);
+        mLntScanBtn = (Button) findViewById(R.id.scan);
+        mGetInfBtn = (Button) findViewById(R.id.getinfo);
         mLntConnectBtn.setOnClickListener(this);
         mLntDisconnectBtn.setOnClickListener(this);
         mLntTransmitBtn.setOnClickListener(this);
+        mLntScanBtn.setOnClickListener(this);
+        mGetInfBtn.setOnClickListener(this);
         HandlerThread thread = new HandlerThread("Test");
         thread.start();
         mAsyncLooper = thread.getLooper();
@@ -79,6 +89,23 @@ public class MainActivity extends Activity implements OnClickListener {
                                         0x00, 0x01, 0x02, 0x04
                         });
                         impl.powerOff();
+                        break;
+                    case R.id.scan:
+                        ConnectPaceDeviceListImpl.getInstance(MainActivity.this)
+                                .getDeviceList(MainActivity.this, new DeviceListImpl() {
+
+                            @Override
+                            public void devicesResult(ArrayList<BlueToothDevice> arg0) {
+                                if (arg0 != null && arg0.size() > 0) {
+                                    Log.d(TAG, "devicesResult：" + arg0.get(0).getAddress());
+                                } else {
+                                    Log.d(TAG, "devicesResult null");
+                                }
+                            }
+                        });
+                        break;
+                    case R.id.getinfo:
+                        impl.getConnectState();
                         break;
                     default:
                         break;

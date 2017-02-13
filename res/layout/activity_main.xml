@@ -11,15 +11,6 @@
         android:text="@string/hello_world" />
 
     <Button
-        android:id="@+id/connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button1"
-        android:layout_marginTop="18dp"
-        android:layout_toRightOf="@+id/textView1"
-        android:text="连接" />
-
-    <Button
         android:id="@+id/disconnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,5 +27,29 @@
         android:layout_below="@+id/button2"
         android:layout_marginTop="20dp"
         android:text="透传" />
+
+    <Button
+        android:id="@+id/connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1"
+        android:layout_toRightOf="@+id/disconnect"
+        android:text="连接" />
+
+    <Button
+        android:id="@+id/scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/connect"
+        android:layout_below="@+id/connect"
+        android:text="扫描" />
+
+    <Button
+        android:id="@+id/getinfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/scan"
+        android:text="获取信息" />
 
 </RelativeLayout>

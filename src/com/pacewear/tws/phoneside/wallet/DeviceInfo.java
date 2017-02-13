@@ -37,6 +37,14 @@ public class DeviceInfo implements Parcelable {
         return bConnect;
     }
 
+    public int getBattery() {
+        return iBatteryLv;
+    }
+
+    public void setBattery(int val) {
+        iBatteryLv = val;
+    }
+
     public void setConnect(boolean connect) {
         bConnect = connect;
     }
