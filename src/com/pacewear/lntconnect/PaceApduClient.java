@@ -8,9 +8,9 @@ import android.util.Log;
 import com.lnt.connectfactorylibrary.BlueToothDevice;
 import com.lnt.connectfactorylibrary.ConnectReturnImpl;
 import com.lnt.connectfactorylibrary.DeviceListImpl;
-import com.pacewear.tws.phoneside.wallet.DeviceInfo;
-import com.pacewear.tws.phoneside.wallet.IPaceApduService;
-import com.pacewear.tws.phoneside.wallet.IPaceInvokeCallback;
+import com.tws.plugin.aidl.PaceServiceAIDL;
+import com.tws.plugin.aidl.PaceInfo;
+import com.tws.plugin.aidl.IPaceCallBack;
 import java.util.ArrayList;
 
 public class PaceApduClient extends AIDLClient {
@@ -19,7 +19,7 @@ public class PaceApduClient extends AIDLClient {
     private ConnectReturnImpl mLntConnectCallback = null;
     private DeviceListImpl mLntScanCallback = null;
 
-    private IPaceInvokeCallback.Stub mInvokeCallback = new IPaceInvokeCallback.Stub() {
+    private IPaceCallBack.Stub mInvokeCallback = new IPaceCallBack.Stub() {
         @Override
         public void onConnectResult(boolean isSuc, String mac) throws RemoteException {
             if (mLntConnectCallback != null) {
@@ -33,16 +33,16 @@ public class PaceApduClient extends AIDLClient {
         }
 
         @Override
-        public void onScanResult(DeviceInfo[] infos) throws RemoteException {
+        public void onScanResult(PaceInfo[] infos) throws RemoteException {
             if (mLntScanCallback != null) {
                 ArrayList<BlueToothDevice> list = new ArrayList<BlueToothDevice>();
-                for (DeviceInfo info : infos) {
+                for (PaceInfo info : infos) {
                     if (info == null) {
                         continue;
                     }
                     BlueToothDevice device = new BlueToothDevice();
                     device.setAddress(info.getMacAddr());
-                    device.setName(info.getName());
+                    device.setName(info.getDevName());
                     Log.d(TAG, "device:addr:" + info.getMacAddr() + ",sName:" + device.getName());
                     list.add(device);
                 }
@@ -61,7 +61,7 @@ public class PaceApduClient extends AIDLClient {
         return sInstance;
     }
 
-    public IPaceApduService get() {
+    public PaceServiceAIDL get() {
         return mService;
     }
 
@@ -71,6 +71,7 @@ public class PaceApduClient extends AIDLClient {
 
     public void scan(final Context context, final DeviceListImpl arg1) {
         mLntScanCallback = arg1;
+        ThreadUtil.getWorkerHandler().removeCallbacksAndMessages(null);
         ThreadUtil.getWorkerHandler().post(new Runnable() {
 
             @Override
@@ -94,6 +95,7 @@ public class PaceApduClient extends AIDLClient {
 
     public void connect(final Context context, final String mac, final ConnectReturnImpl callback) {
         mLntConnectCallback = callback;
+        ThreadUtil.getWorkerHandler().removeCallbacksAndMessages(null);
         ThreadUtil.getWorkerHandler().post(new Runnable() {
 
             @Override
@@ -130,7 +132,7 @@ public class PaceApduClient extends AIDLClient {
         if (mService == null) {
             return Boolean.FALSE;
         }
-        DeviceInfo info = new DeviceInfo();
+        PaceInfo info = new PaceInfo();
         try {
             mService.getDeviceInfo(info);
         } catch (RemoteException e) {

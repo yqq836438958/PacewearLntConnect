@@ -68,7 +68,7 @@ public class MainActivity extends Activity implements OnClickListener {
             public void run() {
                 switch (arg0.getId()) {
                     case R.id.connect:
-                        impl.connection(getApplicationContext(), "010203040506",
+                        impl.connection(getApplicationContext(), "66:36:46:66:30:FF",
                                 new ConnectReturnImpl() {
 
                             @Override

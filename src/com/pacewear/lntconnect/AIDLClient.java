@@ -11,15 +11,13 @@ import android.util.Log;
 
 import com.pacewear.lock.IJavaLock;
 import com.pacewear.lock.JavaLockHelper;
-import com.pacewear.tws.phoneside.wallet.IPaceApduService;
-
-import java.util.concurrent.Semaphore;
+import com.tws.plugin.aidl.PaceServiceAIDL;
 
 public abstract class AIDLClient implements IServiceLocker {
     public static final String TAG = "Lnt";
-    public static final String PACEAPDU_ACTION = "com.pacewear.tws.phoneside.wallet.IPaceApduService";
+    public static final String PACEAPDU_ACTION = "com.pacewear.tws.phoneside.wallet.action_apdu";
     protected Context mContext;
-    protected volatile IPaceApduService mService;
+    protected volatile PaceServiceAIDL mService;
     private ServiceLockHandler mController = null;
     private IJavaLock mJavaLock = null;
 
@@ -63,7 +61,7 @@ public abstract class AIDLClient implements IServiceLocker {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            mService = IPaceApduService.Stub.asInterface(service);
+            mService = PaceServiceAIDL.Stub.asInterface(service);
             mJavaLock.unlock();
             onServiceConnect();
         }
