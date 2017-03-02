@@ -83,11 +83,11 @@ public class MainActivity extends Activity implements OnClickListener {
                         break;
                     case R.id.transmit:
                         impl.powerOn();
-                        // LntConnectTest.transmit(ByteUtil.toByteArray("80500C0008D98B767CE221C2E1"));
-                        impl
-                                .transmit(new byte[] {
-                                        0x00, 0x01, 0x02, 0x04
-                        });
+                        impl.transmit(ByteUtil.toByteArray("00A40400085943542E5553455200"));
+                        impl.transmit(ByteUtil.toByteArray("00A4000002DDF1"));
+                        impl.transmit(ByteUtil.toByteArray("00B0950058"));
+                        impl.transmit(ByteUtil.toByteArray("00A4000002ADF3"));
+                        impl.transmit(ByteUtil.toByteArray("805C000204"));
                         impl.powerOff();
                         break;
                     case R.id.scan:
@@ -97,7 +97,10 @@ public class MainActivity extends Activity implements OnClickListener {
                             @Override
                             public void devicesResult(ArrayList<BlueToothDevice> arg0) {
                                 if (arg0 != null && arg0.size() > 0) {
-                                    Log.d(TAG, "devicesResult：" + arg0.get(0).getAddress());
+                                    for (BlueToothDevice device : arg0) {
+                                        Log.d(TAG, "devicesResult：" + device.getAddress() + ",name:"
+                                                + device.getName());
+                                    }
                                 } else {
                                     Log.d(TAG, "devicesResult null");
                                 }
