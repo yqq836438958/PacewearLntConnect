@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     @Override
-    public void onClick(final View arg0) {
+    public void onClick(final View arg0) {/*
         mAsyncHandler.removeCallbacksAndMessages(null);
         mAsyncHandler.post(new Runnable() {
             @Override
@@ -116,7 +116,7 @@ public class MainActivity extends Activity implements OnClickListener {
             }
         });
 
-    }
+    */}
 
     private void runLntTest() {
         // ConnectFactoryImpl impl = ConnectPaceFactoryImpl.getInstance(getApplicationContext());

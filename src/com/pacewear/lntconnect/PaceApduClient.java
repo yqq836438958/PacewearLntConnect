@@ -164,7 +164,7 @@ public class PaceApduClient extends AIDLClient {
         }
         int exeRet = -1;
         try {
-            exeRet = mService.selectAid("A000000151000000");
+            exeRet = mService.selectAid("5943542E55534552");
         } catch (RemoteException e) {
             result = Boolean.FALSE;
             e.printStackTrace();
