@@ -1,6 +1,7 @@
 
 package com.pacewear.lntconnect;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.os.RemoteException;
 import android.util.Log;
@@ -118,11 +119,13 @@ public class PaceApduClient extends AIDLClient {
     }
 
     public void disconnect() {
-        if (mService != null) {
-            try {
-                mService.disconnect();
-            } catch (RemoteException e) {
-                e.printStackTrace();
+        if (!isPaceClientProccess()) {
+            if (mService != null) {
+                try {
+                    mService.disconnect();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }
         releaseLock();
@@ -201,4 +204,20 @@ public class PaceApduClient extends AIDLClient {
 
     }
 
+    private boolean isPaceClientProccess() {
+        if (mContext == null) {
+            return false;
+        }
+        ActivityManager mActivityManager = (ActivityManager) mContext.getSystemService(
+                Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo appProcess : mActivityManager
+                .getRunningAppProcesses()) {
+            if (appProcess.pid == android.os.Process.myPid()) {
+                if (appProcess.processName.equals(RunEnv.DM_PACKAGE)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
