@@ -91,15 +91,15 @@ public abstract class AIDLClient implements IServiceLocker {
     }
 
     private boolean bindCustomRemoteService(Context context) {
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName(RunEnv.DM_PACKAGE, RunEnv.DM_PACE_SERVICE));
-        return context.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+//        Intent intent = new Intent();
+//        intent.setComponent(new ComponentName(RunEnv.DM_PACKAGE, RunEnv.DM_PACE_SERVICE));
+//        return context.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        return false;
     }
 
     private void unbindRemoteService() {
-        if (mContext != null) {
+        if (mContext != null && mService != null) {
             mContext.unbindService(mConnection);
-            mService = null;
         }
     }
 
