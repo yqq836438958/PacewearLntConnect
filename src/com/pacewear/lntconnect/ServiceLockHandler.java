@@ -22,10 +22,10 @@ public class ServiceLockHandler {
     }
 
     private void onLockChange() {
-        ThreadUtil.getWorkerHandler().removeCallbacks(mShutdownBusinessRun);
-        if (!mServiceLock) {
-            ThreadUtil.getWorkerHandler().postDelayed(mShutdownBusinessRun, DURATION_SHUTDOWN);
-        }
+//        ThreadUtil.getWorkerHandler().removeCallbacks(mShutdownBusinessRun);
+//        if (!mServiceLock) {
+//            ThreadUtil.getWorkerHandler().postDelayed(mShutdownBusinessRun, DURATION_SHUTDOWN);
+//        }
     }
 
     public void onLockRequire() {

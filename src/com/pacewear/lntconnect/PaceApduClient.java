@@ -120,7 +120,7 @@ public class PaceApduClient extends AIDLClient {
 
     public void disconnect() {
         if (!isPaceClientProccess()) {
-            if (mService != null) {
+            if (isServiceReady(mContext)) {
                 try {
                     mService.disconnect();
                 } catch (RemoteException e) {
@@ -132,7 +132,7 @@ public class PaceApduClient extends AIDLClient {
     }
 
     public Object getConnectState() {
-        if (mService == null) {
+        if (!isServiceReady(mContext)) {
             return Boolean.FALSE;
         }
         PaceInfo info = new PaceInfo();
@@ -146,7 +146,7 @@ public class PaceApduClient extends AIDLClient {
 
     public Object powerOff() {
         Boolean result = Boolean.FALSE;
-        if (mService == null) {
+        if (!isServiceReady(mContext)) {
             return result;
         }
         int exeRet = -1;
@@ -162,7 +162,7 @@ public class PaceApduClient extends AIDLClient {
 
     public Object powerOn() {
         Boolean result = Boolean.FALSE;
-        if (mService == null) {
+        if (!isServiceReady(mContext)) {
             return result;
         }
         int exeRet = -1;
@@ -177,7 +177,7 @@ public class PaceApduClient extends AIDLClient {
     }
 
     public byte[] transmit(byte[] arg0) {
-        if (mService == null) {
+        if (!isServiceReady(mContext)) {
             return null;
         }
         try {
